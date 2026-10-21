@@ -1,0 +1,4 @@
+include README.md requirements.txt constraints.txt environment.yaml LICENSE-DIFFUSION-POLICY
+recursive-include examples *.yaml
+recursive-include tests *.py
+recursive-include .github/workflows *.yml

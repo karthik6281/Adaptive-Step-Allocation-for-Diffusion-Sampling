@@ -1,0 +1,31 @@
+dataset: church256
+seed: 42
+deterministic: true
+device: cuda:0
+threads: 1
+model:
+  kind: compvis
+policy:
+  type: diffusion
+  planning_mode: multi
+reward:
+  w_perceptual: 2.0
+  perceptual_mode: delta
+  w_cost: 0.0
+  use_normalization: false
+training:
+  trainer: standard
+  algo: a2c_gae
+  num_episodes: 400
+  batch_size: 16
+  inference_steps: 200
+  reference_steps: 200
+  denoising_budget: 16
+  budget_mode: exact
+  warmup_ratio: 0.0
+  gamma: 1.0
+  gae_lambda: 0.95
+  lr: 0.00005
+  entropy_weight: 0.02
+  value_lr_scale: 50.0
+  diffusion_loss_weight: 0.0

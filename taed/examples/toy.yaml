@@ -1,0 +1,25 @@
+dataset: toy
+seed: 42
+deterministic: true
+device: cpu
+threads: 1
+model:
+  kind: toy
+policy:
+  type: lstm
+  hidden_dim: 16
+  feature_dim: 8
+reward:
+  w_color: 0.001
+  w_cost: 0.005
+training:
+  trainer: standard
+  algo: a2c_gae
+  num_episodes: 4
+  batch_size: 4
+  inference_steps: 8
+  denoising_budget: 4
+  budget_mode: exact
+  warmup_ratio: 0.0
+  lr: 0.001
+  checkpoint_interval: 1

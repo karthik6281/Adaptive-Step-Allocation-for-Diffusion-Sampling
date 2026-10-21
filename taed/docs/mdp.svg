@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="470" viewBox="0 0 1100 470" style="display:block; max-width:100%; height:auto" role="img" aria-labelledby="title description">
+  <title id="title">TAED Markov decision process</title>
+  <desc id="description">The sampler state supplies a policy observation. The policy proposes an action and constraints determine the executed action. The diffusion transition either denoises with one model call or holds the sample and source time without a call. It produces the next state and a reward. The next state starts the following decision unless terminal; rewards update the policy during training only.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#58636f"/>
+    </marker>
+    <marker id="learning-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#55758a"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #28333d; }
+      .heading { font-size: 22px; font-weight: 600; }
+      .label { font-size: 16px; fill: #526572; }
+      .sub { font-size: 14px; baseline-shift: sub; }
+      .case { font-weight: 600; }
+      .box { fill: #ffffff; stroke: #7d8790; stroke-width: 1.4; }
+      .learned { fill: #edf3f7; stroke: #55758a; stroke-width: 1.4; }
+      .flow { fill: none; stroke: #58636f; stroke-width: 1.6; stroke-linejoin: round; marker-end: url(#arrow); }
+      .learning { fill: none; stroke: #55758a; stroke-width: 1.6; stroke-dasharray: 5 4; marker-end: url(#learning-arrow); }
+    </style>
+  </defs>
+  <rect width="1100" height="470" fill="#ffffff"/>
+
+  <g id="state">
+    <rect class="box" x="40" y="45" width="270" height="100" rx="5"/>
+    <text class="heading" x="175" y="79" text-anchor="middle">State s<tspan class="sub">k</tspan></text>
+    <text x="175" y="114" text-anchor="middle">(x<tspan class="sub">τ</tspan>, τ, k, b, c)</text>
+  </g>
+  <path class="flow" d="M 310 95 H 400"/>
+  <text x="355" y="81" text-anchor="middle">o<tspan class="sub">k</tspan></text>
+
+  <g id="action-selection">
+    <rect class="learned" x="400" y="45" width="235" height="100" rx="5"/>
+    <text class="heading" x="517.5" y="79" text-anchor="middle">Policy π<tspan class="sub">ϕ</tspan></text>
+    <text x="517.5" y="114" text-anchor="middle">Denoise / Skip</text>
+  </g>
+  <path class="flow" d="M 635 95 H 720"/>
+  <text x="677.5" y="81" text-anchor="middle">ã<tspan class="sub">k</tspan></text>
+
+  <g id="transition">
+    <rect x="720" y="40" width="330" height="250" rx="5" fill="#f7f9fb" stroke="#7d8790" stroke-width="1.4"/>
+    <text class="heading" x="885" y="73" text-anchor="middle">Diffusion transition</text>
+    <path d="M 740 91 H 1030 M 740 187 H 1030" stroke="#cbd5dc" stroke-width="1"/>
+
+    <text class="case" x="745" y="121">Denoise</text>
+    <text class="case" x="1025" y="121" text-anchor="end">1 NFE</text>
+    <text x="745" y="147">Frozen ε<tspan class="sub">θ</tspan> · DDIM τ → d<tspan class="sub">k</tspan></text>
+    <text x="745" y="174">b′ = b − 1, c′ = 0</text>
+
+    <text class="case" x="745" y="215">Skip</text>
+    <text class="case" x="1025" y="215" text-anchor="end">0 NFE</text>
+    <text x="745" y="241">x′ = x<tspan class="sub">τ</tspan>, τ′ = τ</text>
+    <text x="745" y="268">b′ = b, c′ = c + 1</text>
+  </g>
+
+  <path class="flow" d="M 885 290 V 350"/>
+  <circle cx="885" cy="320" r="3" fill="#58636f"/>
+  <path class="flow" d="M 885 320 H 670 V 260 H 635"/>
+
+  <g id="next-state">
+    <rect class="box" x="720" y="350" width="330" height="92" rx="5"/>
+    <text class="heading" x="885" y="382" text-anchor="middle">Next state s<tspan class="sub">k+1</tspan></text>
+    <text x="885" y="417" text-anchor="middle">(x′, τ′, k + 1, b′, c′)</text>
+  </g>
+  <path class="flow" d="M 720 396 H 175 V 145"/>
+  <text class="label" x="440" y="383" text-anchor="middle">nonterminal</text>
+
+  <g id="reward">
+    <rect class="box" x="400" y="215" width="235" height="90" rx="5"/>
+    <text class="heading" x="517.5" y="248" text-anchor="middle">Reward r<tspan class="sub">k</tspan></text>
+    <text x="517.5" y="281" text-anchor="middle">R − w<tspan class="sub">cost</tspan> · ΔNFE</text>
+  </g>
+  <path class="learning" d="M 517.5 215 V 145"/>
+  <text class="label" x="540" y="185">policy update</text>
+</svg>
