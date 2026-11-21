@@ -1,0 +1,33 @@
+REFERENCE FLOOR [church256] draw=64 k=64  rows: search_church256_B20_n64_sw10.npz (ddim)
+  search_church256_B20_n64_sw10.npz: N+1 gate from runs1/search_church256_B20_n64_sw10_denom.npz
+  file checks passed
+  config latent-diffusion/models/ldm/lsun_churches256/config.yaml
+  ckpt   ldm_models/lsun_churches256/model.ckpt
+🔌 Loading CompVis Adapter from: ldm_models/lsun_churches256/model.ckpt
+/opt/conda/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py:258: LightningDeprecationWarning: `pytorch_lightning.utilities.distributed.rank_zero_only` has been deprecated in v1.8.1 and will be removed in v2.0.0. You can import it from `pytorch_lightning.utilities` instead.
+  rank_zero_deprecation(
+LatentDiffusion: Running in eps-prediction mode
+DiffusionWrapper has 294.97 M params.
+Keeping EMAs of 522.
+making attention of type 'vanilla' with 512 in_channels
+Working with z of shape (1, 4, 32, 32) = 4096 dimensions.
+making attention of type 'vanilla' with 512 in_channels
+Training LatentDiffusion as an unconditional model.
+✅ Adapter Configured: 4 channels, 32x32 latents, 1000 timesteps
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  floor  LPIPS(200-step DDIM, 999-step DDIM) over 64 images:  mean 0.003392  median 0.002136  max 0.026761
+  reproduce  search_church256_B20_n64_sw10.npz  batched shared N vs D_fixed              max |dev| 0.000e+00  PASS
+  reproduce  search_church256_B20_n64_sw10.npz  per-image own vs per_img                 max |dev| 0.000e+00  PASS
+  reproduce  search_church256_B20_n64_sw10.npz  batched shared N+1 vs denominator D_B1   max |dev| 0.000e+00  PASS
+  search_church256_B20_n64_sw10.npz: D(N+1) full 0.079393 = 23.4x floor, subset 0.079393 = 23.4x;  subset R  2.079 (200-step ref) vs 2.024 (999-step ref)
+
+  row                                          smp     D(N+1)/floor (subset)  R full R sub/200 R sub/999  gain 200->999      step 200->999
+  search_church256_B20_n64_sw10.npz            ddim            23.4     23.4   2.079     2.079     2.024  0.01109->0.01106  0.00533->0.00546
+
+SUMMARY refloor dataset=church256 row=search_church256_B20_n64_sw10.npz sampler=ddim B=20 k=64 floor_mean=0.003392 DN1_full=0.079393 ratio=23.4 ratio_sub=23.4 R_full=2.0794 R_sub200=2.0794 R_sub999=2.0242 repro_max_dev=0.000e+00
+  saved runs1/refloor_church256_B20_d64.npz

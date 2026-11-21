@@ -1,0 +1,40 @@
+REFERENCE FLOOR [bedroom256] draw=256 k=64  rows: search_bedroom256_B4_n256_sw10.npz (ddim), search_bedroom256_B8_n256_sw10.npz (ddim)
+  search_bedroom256_B4_n256_sw10.npz: N+1 gate from runs1/denom_search_bedroom256_B4_n256_sw10.npz
+  search_bedroom256_B8_n256_sw10.npz: N+1 gate from runs1/denom_search_bedroom256_B8_n256_sw10.npz
+  file checks passed
+  config latent-diffusion/models/ldm/lsun_beds256/config.yaml
+  ckpt   ldm_models/lsun_beds256/model.ckpt
+🔌 Loading CompVis Adapter from: ldm_models/lsun_beds256/model.ckpt
+/opt/conda/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py:258: LightningDeprecationWarning: `pytorch_lightning.utilities.distributed.rank_zero_only` has been deprecated in v1.8.1 and will be removed in v2.0.0. You can import it from `pytorch_lightning.utilities` instead.
+  rank_zero_deprecation(
+LatentDiffusion: Running in eps-prediction mode
+DiffusionWrapper has 274.06 M params.
+Keeping EMAs of 370.
+making attention of type 'vanilla' with 512 in_channels
+Working with z of shape (1, 3, 64, 64) = 12288 dimensions.
+making attention of type 'vanilla' with 512 in_channels
+Training LatentDiffusion as an unconditional model.
+✅ Adapter Configured: 3 channels, 64x64 latents, 1000 timesteps
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  floor  LPIPS(200-step DDIM, 999-step DDIM) over 64 images:  mean 0.009441  median 0.003789  max 0.242241
+  reproduce  search_bedroom256_B4_n256_sw10.npz  batched shared N vs D_fixed              max |dev| 0.000e+00  PASS
+  reproduce  search_bedroom256_B4_n256_sw10.npz  per-image own vs per_img                 max |dev| 0.000e+00  PASS
+  reproduce  search_bedroom256_B4_n256_sw10.npz  batched shared N+1 vs denominator D_B1   max |dev| 0.000e+00  PASS
+  search_bedroom256_B4_n256_sw10.npz: D(N+1) full 0.395480 = 41.9x floor, subset 0.382901 = 40.6x;  subset R  0.224 (200-step ref) vs 0.226 (999-step ref)
+  reproduce  search_bedroom256_B8_n256_sw10.npz  batched shared N vs D_fixed              max |dev| 0.000e+00  PASS
+  reproduce  search_bedroom256_B8_n256_sw10.npz  per-image own vs per_img                 max |dev| 0.000e+00  PASS
+  reproduce  search_bedroom256_B8_n256_sw10.npz  batched shared N+1 vs denominator D_B1   max |dev| 0.000e+00  PASS
+  search_bedroom256_B8_n256_sw10.npz: D(N+1) full 0.221036 = 23.4x floor, subset 0.218839 = 23.2x;  subset R  0.830 (200-step ref) vs 0.821 (999-step ref)
+
+  row                                          smp     D(N+1)/floor (subset)  R full R sub/200 R sub/999  gain 200->999      step 200->999
+  search_bedroom256_B4_n256_sw10.npz           ddim            41.9     40.6   0.247     0.224     0.226  0.01524->0.01514  0.06799->0.06703
+  search_bedroom256_B8_n256_sw10.npz           ddim            23.4     23.2   0.691     0.830     0.821  0.02253->0.02195  0.02714->0.02673
+
+SUMMARY refloor dataset=bedroom256 row=search_bedroom256_B4_n256_sw10.npz sampler=ddim B=4 k=64 floor_mean=0.009441 DN1_full=0.395480 ratio=41.9 ratio_sub=40.6 R_full=0.2471 R_sub200=0.2241 R_sub999=0.2258 repro_max_dev=0.000e+00
+SUMMARY refloor dataset=bedroom256 row=search_bedroom256_B8_n256_sw10.npz sampler=ddim B=8 k=64 floor_mean=0.009441 DN1_full=0.221036 ratio=23.4 ratio_sub=23.2 R_full=0.6908 R_sub200=0.8305 R_sub999=0.8214 repro_max_dev=0.000e+00
+  saved runs1/refloor_bedroom256_d256.npz

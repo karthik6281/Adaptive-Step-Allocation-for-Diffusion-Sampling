@@ -1,0 +1,30 @@
+==========================================================================
+SD 1.5 REFERENCE FLOOR  source runs1/search_sd15_coco_B8_n64_sw10_cfg3.npz
+  B=8 n=64 cfg=3.0 seed=0 ref_steps=200 sweeps=10 n_cand=12 attn=classic batch=8 decode_chunk=4
+==========================================================================
+  COCO: 5000 val images, 25014 captions; kept 64 distinct images (drew 64, seed 0)
+  prompts, annotation ids and noise seeds match search_sd15_coco_B8_n64_sw10_cfg3.npz: True
+
+Loading pipeline components...:   0%|                                                                                               | 0/5 [00:00<?, ?it/s]
+Loading pipeline components...:  40%|██████████████████████████████████▊                                                    | 2/5 [00:00<00:00,  7.06it/s]
+Loading pipeline components...:  60%|████████████████████████████████████████████████████▏                                  | 3/5 [00:00<00:00,  5.88it/s]
+Loading pipeline components...: 100%|███████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  8.97it/s]
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  reference generated at 200 guided steps for 64 prompts in 942s
+  floor  LPIPS(200-step, 999-step guided DDIM) over 64 prompts: mean 0.020802  median 0.005912  max 0.220008  (4914s)
+  reproduce  search_sd15_coco_B8_n64_sw10_cfg3.npz  batched shared N vs D_fixed                max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10_cfg3.npz  batched shared N+1 vs D_fixed_B1           max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10_cfg3.npz  per-prompt own vs per_img                  max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10_cfg3.npz  per-prompt shared N vs D_fixed_unbatched   max |dev| 0.000e+00  PASS
+  search_sd15_coco_B8_n64_sw10_cfg3.npz: D(N+1) full 0.300442 = 14.4x floor;  subset R 0.904 (200-step ref) vs 0.893 (999-step ref)
+
+  row                                          D(N+1)/floor  R full R sub/200 R sub/999  gain 200->999      step 200->999
+  search_sd15_coco_B8_n64_sw10_cfg3.npz                14.4   0.904     0.904     0.893  0.02733->0.02640  0.03024->0.02955
+
+SUMMARY refloor dataset=sd15_coco cfg=3.0 row=search_sd15_coco_B8_n64_sw10_cfg3.npz sampler=ddim B=8 k=64 floor_mean=0.020802 DN1_full=0.300442 ratio=14.4 R_full=0.9040 R_sub200=0.9040 R_sub999=0.8932 repro_max_dev=0.000e+00
+  saved runs1/refloor_sd15_cfg3.npz  (wall 6063s)

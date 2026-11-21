@@ -1,0 +1,327 @@
+==========================================================================
+SEARCH vs SAMPLE [church256]  B=8 NFE   n=256 images
+==========================================================================
+  config latent-diffusion/models/ldm/lsun_churches256/config.yaml
+  ckpt   ldm_models/lsun_churches256/model.ckpt
+🔌 Loading CompVis Adapter from: ldm_models/lsun_churches256/model.ckpt
+/opt/conda/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py:258: LightningDeprecationWarning: `pytorch_lightning.utilities.distributed.rank_zero_only` has been deprecated in v1.8.1 and will be removed in v2.0.0. You can import it from `pytorch_lightning.utilities` instead.
+  rank_zero_deprecation(
+LatentDiffusion: Running in eps-prediction mode
+DiffusionWrapper has 294.97 M params.
+Keeping EMAs of 522.
+making attention of type 'vanilla' with 512 in_channels
+Working with z of shape (1, 4, 32, 32) = 4096 dimensions.
+making attention of type 'vanilla' with 512 in_channels
+Training LatentDiffusion as an unconditional model.
+✅ Adapter Configured: 4 channels, 32x32 latents, 1000 timesteps
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Downloading: "https://download.pytorch.org/models/alexnet-owt-7be5be79.pth" to /tmp/.cache/torch/hub/checkpoints/alexnet-owt-7be5be79.pth
+
+  0%|                                                                                                                                         | 0.00/233M [00:00<?, ?B/s]
+  1%|█▊                                                                                                                              | 3.38M/233M [00:00<00:06, 35.4MB/s]
+ 11%|██████████████▍                                                                                                                  | 26.1M/233M [00:00<00:01, 154MB/s]
+ 21%|███████████████████████████                                                                                                      | 49.0M/233M [00:00<00:00, 194MB/s]
+ 31%|███████████████████████████████████████▊                                                                                         | 71.9M/233M [00:00<00:00, 212MB/s]
+ 41%|████████████████████████████████████████████████████▍                                                                            | 94.7M/233M [00:00<00:00, 222MB/s]
+ 50%|█████████████████████████████████████████████████████████████████▌                                                                | 117M/233M [00:00<00:00, 227MB/s]
+ 60%|██████████████████████████████████████████████████████████████████████████████▎                                                   | 140M/233M [00:00<00:00, 231MB/s]
+ 70%|██████████████████████████████████████████████████████████████████████████████████████████▉                                       | 163M/233M [00:00<00:00, 234MB/s]
+ 80%|███████████████████████████████████████████████████████████████████████████████████████████████████████▋                          | 186M/233M [00:00<00:00, 236MB/s]
+ 90%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▍             | 209M/233M [00:01<00:00, 237MB/s]
+ 99%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▎| 232M/233M [00:01<00:00, 238MB/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 233M/233M [00:01<00:00, 221MB/s]
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  reference generated at 200 NFE
+
+1  SEARCH THE BEST FIXED SCHEDULE AT B=8   (objective: mean over images)
+    uniform  [999, 874, 749, 624, 500, 375, 250, 125, 0]  mean LPIPS 0.257462
+    searched [999, 869, 760, 636, 500, 373, 220, 60, 0]  mean LPIPS 0.245534   (+4.63% vs uniform, 332 evals, converged)
+
+2  SEARCH THE BEST FIXED SCHEDULE AT B=9   (the yardstick, also searched)
+    searched [999, 888, 787, 666, 555, 444, 326, 182, 61, 0]  mean LPIPS 0.217682   (381 evals, converged)
+    NOTE: B+1 has 8 free interior points vs 7 at B, so the yardstick is
+    searched 1.14x harder. That inflates step_value and therefore
+    biases the ratio DOWNWARD, i.e. toward the null. Both must say 'converged'.
+
+3  SEARCH A SCHEDULE PER IMAGE AT B=8   (the oracle, same routine)
+    image   0  0.242463 -> 0.230337  (+5.00%, 247 evals)
+    image   1  0.111683 -> 0.107934  (+3.36%, 248 evals)
+    image   2  0.196927 -> 0.174639  (+11.32%, 409 evals)
+    image   3  0.221000 -> 0.207694  (+6.02%, 246 evals)
+    image   4  0.264613 -> 0.258471  (+2.32%, 491 evals)
+    image   5  0.171521 -> 0.170438  (+0.63%, 246 evals)
+    image   6  0.213429 -> 0.204344  (+4.26%, 248 evals)
+    image   7  0.243111 -> 0.232883  (+4.21%, 329 evals)
+    image   8  0.274641 -> 0.262046  (+4.59%, 245 evals)
+    image   9  0.292818 -> 0.288838  (+1.36%, 329 evals)
+    image  10  0.266577 -> 0.257135  (+3.54%, 248 evals)
+    image  11  0.403312 -> 0.326981  (+18.93%, 416 evals)
+    image  12  0.192800 -> 0.180741  (+6.25%, 249 evals)
+    image  13  0.257871 -> 0.241250  (+6.45%, 412 evals)
+    image  14  0.392857 -> 0.379120  (+3.50%, 243 evals)
+    image  15  0.199513 -> 0.176720  (+11.42%, 497 evals)
+    image  16  0.182929 -> 0.176109  (+3.73%, 246 evals)
+    image  17  0.188546 -> 0.167079  (+11.39%, 248 evals)
+    image  18  0.093742 -> 0.092813  (+0.99%, 164 evals)
+    image  19  0.191735 -> 0.165675  (+13.59%, 498 evals)
+    image  20  0.431115 -> 0.310031  (+28.09%, 246 evals)
+    image  21  0.395028 -> 0.312998  (+20.77%, 584 evals)
+    image  22  0.451125 -> 0.421080  (+6.66%, 246 evals)
+    image  23  0.222564 -> 0.207970  (+6.56%, 335 evals)
+    image  24  0.216280 -> 0.200399  (+7.34%, 164 evals)
+    image  25  0.174342 -> 0.152548  (+12.50%, 495 evals)
+    image  26  0.231348 -> 0.225476  (+2.54%, 330 evals)
+    image  27  0.186530 -> 0.179868  (+3.57%, 247 evals)
+    image  28  0.383684 -> 0.248834  (+35.15%, 576 evals)
+    image  29  0.311177 -> 0.302950  (+2.64%, 246 evals)
+    image  30  0.419698 -> 0.403846  (+3.78%, 578 evals)
+    image  31  0.293477 -> 0.281728  (+4.00%, 246 evals)
+    image  32  0.137136 -> 0.128632  (+6.20%, 332 evals)
+    image  33  0.177532 -> 0.158555  (+10.69%, 332 evals)
+    image  34  0.354988 -> 0.344328  (+3.00%, 247 evals)
+    image  35  0.205290 -> 0.205290  (+0.00%, 82 evals)
+    image  36  0.152863 -> 0.146602  (+4.10%, 249 evals)
+    image  37  0.113470 -> 0.111370  (+1.85%, 247 evals)
+    image  38  0.367795 -> 0.362537  (+1.43%, 246 evals)
+    image  39  0.171236 -> 0.160408  (+6.32%, 249 evals)
+    image  40  0.282988 -> 0.269619  (+4.72%, 250 evals)
+    image  41  0.182253 -> 0.167403  (+8.15%, 326 evals)
+    image  42  0.329589 -> 0.320567  (+2.74%, 250 evals)
+    image  43  0.263037 -> 0.257384  (+2.15%, 249 evals)
+    image  44  0.416389 -> 0.390425  (+6.24%, 412 evals)
+    image  45  0.418508 -> 0.413100  (+1.29%, 332 evals)
+    image  46  0.145862 -> 0.133838  (+8.24%, 415 evals)
+    image  47  0.355570 -> 0.330116  (+7.16%, 247 evals)
+    image  48  0.314147 -> 0.308414  (+1.82%, 325 evals)
+    image  49  0.243844 -> 0.240272  (+1.46%, 250 evals)
+    image  50  0.246923 -> 0.238792  (+3.29%, 332 evals)
+    image  51  0.246372 -> 0.221058  (+10.27%, 414 evals)
+    image  52  0.202981 -> 0.197447  (+2.73%, 328 evals)
+    image  53  0.181565 -> 0.177344  (+2.32%, 246 evals)
+    image  54  0.252737 -> 0.225643  (+10.72%, 579 evals)
+    image  55  0.099265 -> 0.096855  (+2.43%, 249 evals)
+    image  56  0.246616 -> 0.199221  (+19.22%, 249 evals)
+    image  57  0.272446 -> 0.244815  (+10.14%, 659 evals)
+    image  58  0.114307 -> 0.106934  (+6.45%, 417 evals)
+    image  59  0.313944 -> 0.309406  (+1.45%, 326 evals)
+    image  60  0.354447 -> 0.323196  (+8.82%, 334 evals)
+    image  61  0.353090 -> 0.351483  (+0.46%, 245 evals)
+    image  62  0.384422 -> 0.379577  (+1.26%, 332 evals)
+    image  63  0.255904 -> 0.245751  (+3.97%, 244 evals)
+    image  64  0.308577 -> 0.252604  (+18.14%, 493 evals)
+    image  65  0.363656 -> 0.228581  (+37.14%, 416 evals)
+    image  66  0.202294 -> 0.110537  (+45.36%, 331 evals)
+    image  67  0.191393 -> 0.181755  (+5.04%, 332 evals)
+    image  68  0.331504 -> 0.316269  (+4.60%, 330 evals)
+    image  69  0.198451 -> 0.168699  (+14.99%, 415 evals)
+    image  70  0.212375 -> 0.181197  (+14.68%, 333 evals)
+    image  71  0.177499 -> 0.173427  (+2.29%, 327 evals)
+    image  72  0.232160 -> 0.171490  (+26.13%, 247 evals)
+    image  73  0.172720 -> 0.165213  (+4.35%, 245 evals)
+    image  74  0.155138 -> 0.135005  (+12.98%, 500 evals)
+    image  75  0.346017 -> 0.322005  (+6.94%, 165 evals)
+    image  76  0.240886 -> 0.240628  (+0.11%, 162 evals)
+    image  77  0.185121 -> 0.177740  (+3.99%, 329 evals)
+    image  78  0.191596 -> 0.184000  (+3.96%, 415 evals)
+    image  79  0.166242 -> 0.151709  (+8.74%, 249 evals)
+    image  80  0.207238 -> 0.199813  (+3.58%, 250 evals)
+    image  81  0.100489 -> 0.085668  (+14.75%, 326 evals)
+    image  82  0.140362 -> 0.138385  (+1.41%, 247 evals)
+    image  83  0.143281 -> 0.103691  (+27.63%, 247 evals)
+    image  84  0.333454 -> 0.316225  (+5.17%, 501 evals)
+    image  85  0.146849 -> 0.144778  (+1.41%, 162 evals)
+    image  86  0.273986 -> 0.243168  (+11.25%, 416 evals)
+    image  87  0.221327 -> 0.216957  (+1.97%, 330 evals)
+    image  88  0.253660 -> 0.243575  (+3.98%, 332 evals)
+    image  89  0.201183 -> 0.196648  (+2.25%, 247 evals)
+    image  90  0.169074 -> 0.163744  (+3.15%, 413 evals)
+    image  91  0.186518 -> 0.172270  (+7.64%, 331 evals)
+    image  92  0.125853 -> 0.117328  (+6.77%, 410 evals)
+    image  93  0.309864 -> 0.266285  (+14.06%, 583 evals)
+    image  94  0.203801 -> 0.203264  (+0.26%, 249 evals)
+    image  95  0.235980 -> 0.217212  (+7.95%, 414 evals)
+    image  96  0.217925 -> 0.209795  (+3.73%, 497 evals)
+    image  97  0.260881 -> 0.236698  (+9.27%, 411 evals)
+    image  98  0.283184 -> 0.273940  (+3.26%, 658 evals)
+    image  99  0.427525 -> 0.299447  (+29.96%, 330 evals)
+    image 100  0.229067 -> 0.204623  (+10.67%, 666 evals)
+    image 101  0.368568 -> 0.310577  (+15.73%, 245 evals)
+    image 102  0.380229 -> 0.367257  (+3.41%, 245 evals)
+    image 103  0.141107 -> 0.123707  (+12.33%, 329 evals)
+    image 104  0.194461 -> 0.167717  (+13.75%, 664 evals)
+    image 105  0.334916 -> 0.278888  (+16.73%, 409 evals)
+    image 106  0.287152 -> 0.251035  (+12.58%, 582 evals)
+    image 107  0.411276 -> 0.403535  (+1.88%, 412 evals)
+    image 108  0.205260 -> 0.196197  (+4.42%, 498 evals)
+    image 109  0.476186 -> 0.460459  (+3.30%, 499 evals)
+    image 110  0.158015 -> 0.152186  (+3.69%, 332 evals)
+    image 111  0.305874 -> 0.273376  (+10.62%, 582 evals)
+    image 112  0.237803 -> 0.231201  (+2.78%, 244 evals)
+    image 113  0.401421 -> 0.389853  (+2.88%, 246 evals)
+    image 114  0.183617 -> 0.151624  (+17.42%, 333 evals)
+    image 115  0.281928 -> 0.270935  (+3.90%, 414 evals)
+    image 116  0.190557 -> 0.186496  (+2.13%, 245 evals)
+    image 117  0.399134 -> 0.352913  (+11.58%, 489 evals)
+    image 118  0.306340 -> 0.243126  (+20.64%, 749 evals)
+    image 119  0.189655 -> 0.181089  (+4.52%, 244 evals)
+    image 120  0.157709 -> 0.144229  (+8.55%, 744 evals)
+    image 121  0.120832 -> 0.114734  (+5.05%, 497 evals)
+    image 122  0.189914 -> 0.179236  (+5.62%, 741 evals)
+    image 123  0.131346 -> 0.122225  (+6.94%, 328 evals)
+    image 124  0.298738 -> 0.279367  (+6.48%, 329 evals)
+    image 125  0.241552 -> 0.219951  (+8.94%, 415 evals)
+    image 126  0.406218 -> 0.317798  (+21.77%, 496 evals)
+    image 127  0.124790 -> 0.122063  (+2.19%, 249 evals)
+    image 128  0.330518 -> 0.315174  (+4.64%, 741 evals)
+    image 129  0.206254 -> 0.194578  (+5.66%, 247 evals)
+    image 130  0.261566 -> 0.251439  (+3.87%, 247 evals)
+    image 131  0.199827 -> 0.195371  (+2.23%, 330 evals)
+    image 132  0.215934 -> 0.208141  (+3.61%, 411 evals)
+    image 133  0.195471 -> 0.181995  (+6.89%, 574 evals)
+    image 134  0.283254 -> 0.279519  (+1.32%, 330 evals)
+    image 135  0.472067 -> 0.458803  (+2.81%, 414 evals)
+    image 136  0.220865 -> 0.200148  (+9.38%, 413 evals)
+    image 137  0.288641 -> 0.263025  (+8.87%, 248 evals)
+    image 138  0.178940 -> 0.159067  (+11.11%, 248 evals)
+    image 139  0.269617 -> 0.267835  (+0.66%, 166 evals)
+    image 140  0.114839 -> 0.107840  (+6.09%, 415 evals)
+    image 141  0.162330 -> 0.146058  (+10.02%, 743 evals)
+    image 142  0.147775 -> 0.135874  (+8.05%, 164 evals)
+    image 143  0.152174 -> 0.147992  (+2.75%, 164 evals)
+    image 144  0.104857 -> 0.098754  (+5.82%, 326 evals)
+    image 145  0.299149 -> 0.294806  (+1.45%, 330 evals)
+    image 146  0.158318 -> 0.141771  (+10.45%, 497 evals)
+    image 147  0.160240 -> 0.146625  (+8.50%, 495 evals)
+    image 148  0.295544 -> 0.292006  (+1.20%, 327 evals)
+    image 149  0.167951 -> 0.167607  (+0.20%, 165 evals)
+    image 150  0.359004 -> 0.343162  (+4.41%, 248 evals)
+    image 151  0.144302 -> 0.138986  (+3.68%, 489 evals)
+    image 152  0.223717 -> 0.223659  (+0.03%, 163 evals)
+    image 153  0.173154 -> 0.171753  (+0.81%, 164 evals)
+    image 154  0.278546 -> 0.214747  (+22.90%, 832 evals)
+    image 155  0.170058 -> 0.165394  (+2.74%, 248 evals)
+    image 156  0.245706 -> 0.233402  (+5.01%, 413 evals)
+    image 157  0.231584 -> 0.210316  (+9.18%, 329 evals)
+    image 158  0.211292 -> 0.186973  (+11.51%, 579 evals)
+    image 159  0.401401 -> 0.380093  (+5.31%, 248 evals)
+    image 160  0.319752 -> 0.308929  (+3.38%, 499 evals)
+    image 161  0.258450 -> 0.248077  (+4.01%, 328 evals)
+    image 162  0.158115 -> 0.151400  (+4.25%, 245 evals)
+    image 163  0.371938 -> 0.207727  (+44.15%, 333 evals)
+    image 164  0.177760 -> 0.161010  (+9.42%, 249 evals)
+    image 165  0.158479 -> 0.155809  (+1.68%, 246 evals)
+    image 166  0.091161 -> 0.084232  (+7.60%, 331 evals)
+    image 167  0.179251 -> 0.168532  (+5.98%, 412 evals)
+    image 168  0.252755 -> 0.213121  (+15.68%, 328 evals)
+    image 169  0.225393 -> 0.217177  (+3.65%, 497 evals)
+    image 170  0.272382 -> 0.264712  (+2.82%, 245 evals)
+    image 171  0.265210 -> 0.212064  (+20.04%, 577 evals)
+    image 172  0.318378 -> 0.300923  (+5.48%, 328 evals)
+    image 173  0.195068 -> 0.183504  (+5.93%, 490 evals)
+    image 174  0.098920 -> 0.090186  (+8.83%, 249 evals)
+    image 175  0.370333 -> 0.351891  (+4.98%, 578 evals)
+    image 176  0.375705 -> 0.354961  (+5.52%, 331 evals)
+    image 177  0.123739 -> 0.110724  (+10.52%, 492 evals)
+    image 178  0.171978 -> 0.158755  (+7.69%, 328 evals)
+    image 179  0.278877 -> 0.252885  (+9.32%, 579 evals)
+    image 180  0.298462 -> 0.284809  (+4.57%, 411 evals)
+    image 181  0.142509 -> 0.135466  (+4.94%, 248 evals)
+    image 182  0.276335 -> 0.206259  (+25.36%, 499 evals)
+    image 183  0.416948 -> 0.403210  (+3.29%, 330 evals)
+    image 184  0.169252 -> 0.143922  (+14.97%, 416 evals)
+    image 185  0.264328 -> 0.254302  (+3.79%, 327 evals)
+    image 186  0.140172 -> 0.135838  (+3.09%, 321 evals)
+    image 187  0.115529 -> 0.110670  (+4.21%, 248 evals)
+    image 188  0.357482 -> 0.285937  (+20.01%, 584 evals)
+    image 189  0.114658 -> 0.105532  (+7.96%, 328 evals)
+    image 190  0.487690 -> 0.445079  (+8.74%, 331 evals)
+    image 191  0.170965 -> 0.158182  (+7.48%, 824 evals, CAPPED)
+    image 192  0.399443 -> 0.306198  (+23.34%, 330 evals)
+    image 193  0.418385 -> 0.396706  (+5.18%, 166 evals)
+    image 194  0.189263 -> 0.180682  (+4.53%, 412 evals)
+    image 195  0.223701 -> 0.221219  (+1.11%, 165 evals)
+    image 196  0.244597 -> 0.230017  (+5.96%, 411 evals)
+    image 197  0.185796 -> 0.171251  (+7.83%, 329 evals)
+    image 198  0.192911 -> 0.185355  (+3.92%, 414 evals)
+    image 199  0.178718 -> 0.157969  (+11.61%, 834 evals, CAPPED)
+    image 200  0.140065 -> 0.128842  (+8.01%, 413 evals)
+    image 201  0.131999 -> 0.123298  (+6.59%, 490 evals)
+    image 202  0.100225 -> 0.093295  (+6.91%, 408 evals)
+    image 203  0.297567 -> 0.272632  (+8.38%, 499 evals)
+    image 204  0.397082 -> 0.378348  (+4.72%, 251 evals)
+    image 205  0.151908 -> 0.140384  (+7.59%, 492 evals)
+    image 206  0.262601 -> 0.257589  (+1.91%, 248 evals)
+    image 207  0.289682 -> 0.238013  (+17.84%, 583 evals)
+    image 208  0.296914 -> 0.282414  (+4.88%, 330 evals)
+    image 209  0.258701 -> 0.207266  (+19.88%, 500 evals)
+    image 210  0.175658 -> 0.169362  (+3.58%, 248 evals)
+    image 211  0.291599 -> 0.283645  (+2.73%, 413 evals)
+    image 212  0.241398 -> 0.228714  (+5.25%, 332 evals)
+    image 213  0.134117 -> 0.130844  (+2.44%, 324 evals)
+    image 214  0.262902 -> 0.259255  (+1.39%, 247 evals)
+    image 215  0.263161 -> 0.252032  (+4.23%, 410 evals)
+    image 216  0.316363 -> 0.307744  (+2.72%, 411 evals)
+    image 217  0.168145 -> 0.153138  (+8.93%, 251 evals)
+    image 218  0.246720 -> 0.242239  (+1.82%, 164 evals)
+    image 219  0.229792 -> 0.215881  (+6.05%, 250 evals)
+    image 220  0.358494 -> 0.308852  (+13.85%, 500 evals)
+    image 221  0.275984 -> 0.271761  (+1.53%, 246 evals)
+    image 222  0.300662 -> 0.294372  (+2.09%, 330 evals)
+    image 223  0.406597 -> 0.396259  (+2.54%, 413 evals)
+    image 224  0.113839 -> 0.108637  (+4.57%, 249 evals)
+    image 225  0.498342 -> 0.486474  (+2.38%, 410 evals)
+    image 226  0.125743 -> 0.124532  (+0.96%, 164 evals)
+    image 227  0.096252 -> 0.094103  (+2.23%, 249 evals)
+    image 228  0.214691 -> 0.197999  (+7.77%, 491 evals)
+    image 229  0.330472 -> 0.303622  (+8.12%, 415 evals)
+    image 230  0.227075 -> 0.220789  (+2.77%, 331 evals)
+    image 231  0.121312 -> 0.117843  (+2.86%, 414 evals)
+    image 232  0.341707 -> 0.334948  (+1.98%, 329 evals)
+    image 233  0.241984 -> 0.233902  (+3.34%, 325 evals)
+    image 234  0.373254 -> 0.332233  (+10.99%, 328 evals)
+    image 235  0.338020 -> 0.301943  (+10.67%, 502 evals)
+    image 236  0.180362 -> 0.179275  (+0.60%, 247 evals)
+    image 237  0.137403 -> 0.132650  (+3.46%, 331 evals)
+    image 238  0.276778 -> 0.247470  (+10.59%, 333 evals)
+    image 239  0.288958 -> 0.254245  (+12.01%, 667 evals)
+    image 240  0.379721 -> 0.263714  (+30.55%, 832 evals, CAPPED)
+    image 241  0.236858 -> 0.227275  (+4.05%, 164 evals)
+    image 242  0.500315 -> 0.413658  (+17.32%, 499 evals)
+    image 243  0.208132 -> 0.199116  (+4.33%, 246 evals)
+    image 244  0.250546 -> 0.249807  (+0.29%, 164 evals)
+    image 245  0.247420 -> 0.216685  (+12.42%, 418 evals)
+    image 246  0.305479 -> 0.299908  (+1.82%, 328 evals)
+    image 247  0.267636 -> 0.257705  (+3.71%, 416 evals)
+    image 248  0.090523 -> 0.083507  (+7.75%, 497 evals)
+    image 249  0.098229 -> 0.094192  (+4.11%, 333 evals)
+    image 250  0.212887 -> 0.201801  (+5.21%, 497 evals)
+    image 251  0.189490 -> 0.161115  (+14.97%, 251 evals)
+    image 252  0.412579 -> 0.397587  (+3.63%, 250 evals)
+    image 253  0.209268 -> 0.155355  (+25.76%, 332 evals)
+    image 254  0.184852 -> 0.159795  (+13.55%, 414 evals)
+    image 255  0.234953 -> 0.225574  (+3.99%, 413 evals)
+
+    batched-vs-unbatched gap on the SAME schedule: max 8.747e-06  (negligible)
+
+==========================================================================
+  best FIXED (searched)     : 0.245534
+  per-image  (searched)     : 0.225677
+  SEARCHED ORACLE GAIN      : 0.019857
+  one extra NFE (searched)  : 0.027852
+  -> worth 0.713 extra NFE
+  images where search beat the fixed schedule : 255/256
+  distinct per-image schedules found          : 255/256
+  WARNING: 3/256 per-image searches hit the sweep cap; raise --sweeps
+
+  -> SEARCH DOES NOT RESCUE IT. Even a per-image search over the schedule
+     space buys less than one extra denoising step. Sampling was not the
+     limitation, and the sampled ceiling was not an artefact of the pool.
+
+  LDM calls used: 2,308,320
+
+SUMMARY search_vs_sample dataset=church256 budget=8 n=256 searched_gain=0.019857 step_value=0.027852 ratio=0.7130 n_improved=255 uniq_schedules=255 conv_B=1 conv_B1=1 n_capped=3 calls=2308320
+  saved runs2/search_church256_B8_n256_sw10.npz

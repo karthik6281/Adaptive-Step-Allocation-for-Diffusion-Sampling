@@ -1,0 +1,39 @@
+==========================================================================
+SD 1.5 REFERENCE FLOOR  source runs1/search_sd15_coco_B8_n64_sw10.npz
+  B=8 n=64 cfg=7.5 seed=0 ref_steps=200 sweeps=10 n_cand=12 attn=classic batch=8 decode_chunk=4
+==========================================================================
+  COCO: 5000 val images, 25014 captions; kept 64 distinct images (drew 64, seed 0)
+  prompts, annotation ids and noise seeds match search_sd15_coco_B8_n64_sw10.npz: True
+  prompts, annotation ids and noise seeds match search_sd15_coco_B4_n64_sw10.npz: True
+
+Loading pipeline components...:   0%|                                                                                               | 0/5 [00:00<?, ?it/s]
+Loading pipeline components...:  20%|█████████████████▍                                                                     | 1/5 [00:00<00:00,  4.58it/s]
+Loading pipeline components...:  40%|██████████████████████████████████▊                                                    | 2/5 [00:00<00:00,  4.42it/s]
+Loading pipeline components...:  80%|█████████████████████████████████████████████████████████████████████▌                 | 4/5 [00:00<00:00,  7.82it/s]
+Loading pipeline components...: 100%|███████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00,  8.46it/s]
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  reference generated at 200 guided steps for 64 prompts in 611s
+  floor  LPIPS(200-step, 999-step guided DDIM) over 64 prompts: mean 0.029786  median 0.014541  max 0.303836  (3032s)
+  reproduce  search_sd15_coco_B8_n64_sw10.npz  batched shared N vs D_fixed                max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10.npz  batched shared N+1 vs D_fixed_B1           max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10.npz  per-prompt own vs per_img                  max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B8_n64_sw10.npz  per-prompt shared N vs D_fixed_unbatched   max |dev| 0.000e+00  PASS
+  search_sd15_coco_B8_n64_sw10.npz: D(N+1) full 0.344530 = 11.6x floor;  subset R 2.619 (200-step ref) vs 2.554 (999-step ref)
+  reproduce  search_sd15_coco_B4_n64_sw10.npz  batched shared N vs D_fixed                max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B4_n64_sw10.npz  batched shared N+1 vs D_fixed_B1           max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B4_n64_sw10.npz  per-prompt own vs per_img                  max |dev| 0.000e+00  PASS
+  reproduce  search_sd15_coco_B4_n64_sw10.npz  per-prompt shared N vs D_fixed_unbatched   max |dev| 0.000e+00  PASS
+  search_sd15_coco_B4_n64_sw10.npz: D(N+1) full 0.480578 = 16.1x floor;  subset R 0.774 (200-step ref) vs 0.788 (999-step ref)
+
+  row                                          D(N+1)/floor  R full R sub/200 R sub/999  gain 200->999      step 200->999
+  search_sd15_coco_B8_n64_sw10.npz                     11.6   2.619     2.619     2.554  0.06509->0.06362  0.02485->0.02491
+  search_sd15_coco_B4_n64_sw10.npz                     16.1   0.774     0.774     0.788  0.04956->0.04878  0.06402->0.06188
+
+SUMMARY refloor dataset=sd15_coco cfg=7.5 row=search_sd15_coco_B8_n64_sw10.npz sampler=ddim B=8 k=64 floor_mean=0.029786 DN1_full=0.344530 ratio=11.6 R_full=2.6193 R_sub200=2.6193 R_sub999=2.5537 repro_max_dev=0.000e+00
+SUMMARY refloor dataset=sd15_coco cfg=7.5 row=search_sd15_coco_B4_n64_sw10.npz sampler=ddim B=4 k=64 floor_mean=0.029786 DN1_full=0.480578 ratio=16.1 R_full=0.7741 R_sub200=0.7741 R_sub999=0.7883 repro_max_dev=0.000e+00
+  saved runs1/refloor_sd15_cfg7.5.npz  (wall 3863s)

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the technical report."
+title: "Adaptive Step Allocation for Diffusion Sampling"
+type: software
+authors:
+  - family-names: Ravula
+    given-names: Karthik
+repository-code: "https://github.com/karthik6281/Adaptive-Step-Allocation-for-Diffusion-Sampling"
+version: "1.0"
+date-released: "2026-11-21"
+preferred-citation:
+  type: report
+  title: "How Much Is Per-Sample Step Placement Worth at a Fixed Budget?"
+  authors:
+    - family-names: Ravula
+      given-names: Karthik
+  year: 2026
+  month: 11
+  notes: "Technical report, v1"
+  url: "https://github.com/karthik6281/Adaptive-Step-Allocation-for-Diffusion-Sampling/blob/main/step-placement/How%20Much%20Is%20Per-Sample%20Step%20Placement%20Worth%20at%20a%20Fixed%20Budget%20Latest.pdf"

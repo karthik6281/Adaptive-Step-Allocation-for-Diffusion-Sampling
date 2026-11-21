@@ -1,103 +1,143 @@
-# Step placement at a fixed budget
+# Per-sample step placement at a fixed budget
 
-Code and data for measuring how much a single shared timestep schedule costs,
-relative to giving every sample its own, at a fixed number of denoising
-evaluations.
+Code and data for the technical report
+[*How Much Is Per-Sample Step Placement Worth at a Fixed Budget?*](How%20Much%20Is%20Per-Sample%20Step%20Placement%20Worth%20at%20a%20Fixed%20Budget%20Latest.pdf)
+(technical report, v1, November 2026, not peer reviewed).
 
-The four result tables and two derived summaries regenerate from the arrays in
-`data/`, on CPU, in a few seconds, with no downloads or model checkpoints:
+For each image, we search for the timestep schedule that brings it closest, in LPIPS, to a
+200-step reference from the same noise, and compare it with the best shared schedule at the
+same number of denoising evaluations. At 4 and 8 evaluations, per-sample placement is worth
+about 6–9% of the budget for DDIM on LSUN church and bedroom, and 19–30% on ImageNet,
+Stable Diffusion 1.5 at guidance 7.5, and DPM-Solver++ on church. A tuned shared schedule
+already provides 29–84% of the improvement over uniform spacing, so a per-sample method
+should be compared with a tuned shared schedule at the same budget.
+
+![Share of the budget that per-sample placement is worth, by setting](figures/fig_shares.png)
+
+## Reproducing the results
+
+Every number, table and figure from the full rollouts is computed from the run files in
+`data/rollouts/`, on CPU, in a few seconds:
+
+```bash
+pip install numpy matplotlib
+python rollouts/paper_numbers.py --root data/rollouts --out build/paper
+python rollouts/paper_figures.py --dir build/paper/figures --steps-root .
+```
+
+`--steps-root .` adds the local-error profile figure, which reads `data/profiles/` through
+the `steps` package in `src/`.
+
+`paper_numbers.py` writes `numbers.tex`, the table rows and the figure data that the report
+uses. It also checks 40 statements the text makes, such as which intervals exclude one, and
+exits non-zero if any of them fails. Intervals are BCa intervals from 10,000 bootstrap
+resamples of the images with seed 0.
+
+The local-error results (Section 5 of the report and the search check in Appendix I) come
+from the profiles in `data/profiles/`:
 
 ```bash
 pip install -e .
 python scripts/check.py
 ```
 
-That recomputes 130 published values — the four result tables plus the
-mean-shape share and the coordinate-descent calibration — and exits non-zero if
-any of them disagrees with what the paper prints.
+`check.py` comes from the earlier version of the report. Its LPIPS-advantage table uses the
+original shared schedules; the current report replaces those values with the refined ones
+that `paper_numbers.py` computes.
 
 ## Layout
 
 ```
-src/steps/
-    config.py    constants, and the published values check.py compares against
-    grid.py      which grid columns actually measure curvature
-    load.py      reading the arrays
-    mesh.py      the objective, its exact DP optimiser, coordinate descent
-    shape.py     pairwise agreement between profiles
-    boot.py      conditional bootstrap for the LPIPS advantage
-    results.py   the four tables
-    plots.py     pgfplots fragments
-scripts/         check.py, tables.py, figures.py
-generators/      GPU stage that produced data/ -- optional, see its README
-data/            profiles/ (5 arrays) and runs/ (searches, solver diagnostics)
+rollouts/          full-rollout study
+    search_vs_sample.py      shared and per-image searches, DDIM on LSUN
+    search_vs_sample_v2.py   the same search for ImageNet and DPM-Solver++
+    search_sd.py             the same search for Stable Diffusion 1.5 on COCO captions
+    search_denominator.py    per-image scores at N+1, for the interval of the denominator
+    uncap.py                 continues the per-image searches that reached the sweep limit
+    shared_check.py          refines the shared schedules; uniform-spacing scores
+    sd_more.py               the same for Stable Diffusion, and its reference check
+    ref_floor.py             200-step against 999-step reference
+    sd_checks.py             PSNR, DISTS and the fixed-schedule sets on Stable Diffusion
+    reward_structure.py      rollout, decoding and LPIPS helpers
+    curvature_probe.py, solver_probe.py, adapter_compvis.py   imported helpers
+    bootstrap.py             intervals for every row, paired comparison and budget trend
+    paper_numbers.py         every number and table in the report
+    paper_figures.py         the figures
+    paper_samples.py         the example-image figure (needs the PNGs from sd_checks.py)
+data/rollouts/     run outputs read by the CPU scripts, and sd_prompts.tsv
+src/steps/, scripts/, generators/, data/profiles/, data/runs/
+                   local-error study (Section 5)
 ```
 
-`make tables` prints the tables, `make latex` emits LaTeX bodies, `make figures`
-writes the two figure fragments.
+## Re-running the GPU stage
 
-## Using it directly
+The GPU scripts need a CUDA device, PyTorch, the `lpips` package, `diffusers` for Stable
+Diffusion, and the [latent-diffusion](https://github.com/CompVis/latent-diffusion)
+repository for the model configs. Checkpoints are not redistributed:
 
-```python
-import numpy as np
-from steps import load, mesh
+- LSUN church, LSUN bedroom and ImageNet: the `lsun_churches256`, `lsun_beds256` and
+  `cin256` latent diffusion checkpoints from the latent-diffusion repository. Set
+  `TAED_LDM_ROOT` to the folder that holds `<name>/model.ckpt`.
+- Stable Diffusion 1.5:
+  [`stable-diffusion-v1-5/stable-diffusion-v1-5`](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5),
+  with its fp16 weights.
+- COCO-2017 validation captions (`captions_val2017.json`) from
+  [cocodataset.org](https://cocodataset.org).
 
-profiles, nodes = load.profile("church256")   # (256, 188) and node positions
-shapes = mesh.normalise(profiles)             # scale cancels; only shape matters
+Each script lists its flags with `--help`. The outputs map to scripts as follows:
 
-shared = mesh.best_mesh(nodes, shapes.mean(0), budget=8)
-ex = mesh.excess(shapes, nodes, budget=8)
+| files in `data/rollouts/` | script |
+| --- | --- |
+| `search_church256_*_sw10.*`, `search_bedroom256_*_sw10.*` (DDIM) | `search_vs_sample.py` |
+| `search_cin256_*_sw10.npz`, `search_church256_B8_n64_sw10_dpmpp2m.npz` | `search_vs_sample_v2.py` |
+| `search_sd15_coco_*` | `search_sd.py` |
+| `denom_*`, `*_denom.npz` | `search_denominator.py` |
+| `uncap_*` | `uncap.py` |
+| `shared_*`, `rescore_*`, `round2_*`, `uniform_*` | `shared_check.py` |
+| `sdrescore_*`, `sdround2_*`, `sduniform_*`, `refloor_sd15_*` | `sd_more.py` |
+| other `refloor_*` | `ref_floor.py` |
+| `sdpost_*` | `sd_checks.py` |
 
-print(shared.tolist())
-# [0, 74, 94, 112, 127, 143, 157, 173, 187]
-print(f"median {np.median(ex):.2f}%  p90 {np.quantile(ex, 0.9):.2f}%")
-# median 3.13%  p90 8.74%
-```
-
-## Method
-
-The surrogate models the leading local truncation error on step $i$ of an
-order-$p$ solver as $c_k(t_i)h_i^{p+1}$ and sums it over a mesh. Because it is
-linear in the profile, scaling a profile cannot change which mesh minimises it —
-only the temporal shape can. Profiles come from the Euclidean norm of the second
-difference of 256 deterministic DDIM trajectories per model on a 200-step grid.
-After dropping the terminal boundary spike and the columns contaminated by grid
-rounding, 188 candidate nodes remain, spanning timesteps 994 to 50. Shared and
-per-sample optima are solved exactly by dynamic programming rather than with the
-equidistribution formula, which is a many-step approximation and misprices
-meshes badly at these budgets.
-
-## Caveats
-
-- The surrogate sums local error magnitudes. It ignores propagation and
-  cancellation through later steps, and is not an image-quality metric.
-- The per-image LPIPS searches score against the same reference they optimise
-  toward, which a deployable predictor would not have.
-- Coordinate descent can miss better schedules, so the reported advantages
-  bound neither the global optimum nor what a predictor could recover.
-- Converting LPIPS gaps to evaluation-equivalents assumes local linearity.
-- All five checkpoints come from one source and share a noise schedule, so the
-  high cross-model shape agreement may be partly a property of that schedule.
-- Stochastic sampling ($\eta > 0$) and text-conditioned models are untested.
+The runs used one V100 per job. Searches take from minutes to several hours per row.
 
 ## Data
 
-The 6.4 MB data bundle contains 33 NPZ archives and no run logs or local paths.
+- `data/rollouts/runs1/`, `data/rollouts/runs2/`: NPZ arrays with the searched
+  schedules, the per-image LPIPS scores and the shared-schedule scores at N and N+1, plus
+  the logs of the original searches, which `bootstrap.py` reads for the per-image baseline.
+  Paths in the logs are shortened.
+- `data/rollouts/sd_prompts.tsv`: the 64 COCO-2017 validation captions with their image and
+  annotation ids and the noise seed of each prompt.
+- `data/profiles/`, `data/runs/`: the local-error profiles and runs of the earlier version.
 
-- `profiles/curv_<model>.npz` — key `curv`, shape `(256, 199)`: untrimmed
-  curvature proxy per sample. `load.profile` trims it to 188 columns.
-- `runs/search_<model>_B<n>_n256_sw10.npz` — per-image LPIPS searches, including
-  the reported counts and run metadata.
-- `runs/curv_<model>_100.npz`, `runs/dpm_<model>.npz` — solver diagnostics.
+No generated images or checkpoints are included.
 
-Nineteen archives feed `check.py`. The remaining archives support appendix
-sensitivity checks: 64-image searches, 50/400-step grid measurements, and the
-excluded stochastic runs.
+## Caveats
 
-Model keys are `church256`, `bedroom256`, `celeb256`, `ffhq256`, `cin256`; the
-solver runs use `church` for LSUN-church.
+- Each per-image search scores against that image's own reference, which a deployed
+  predictor does not have, so the gains are the upper end of what a predictor could get.
+- Coordinate descent is a local search. Appendix C of the report lists how much refining
+  the shared schedules changed each row.
+- LPIPS to a same-noise reference measures fidelity to the model's many-step output, not
+  distributional quality.
+- Each setting uses one model. Stochastic samplers, flow-matching models and distilled
+  few-step models are not tested.
+
+## Citation
+
+```bibtex
+@misc{ravula2026stepplacement,
+  title  = {How Much Is Per-Sample Step Placement Worth at a Fixed Budget?},
+  author = {Ravula, Karthik},
+  year   = {2026},
+  month  = nov,
+  note   = {Technical report, v1},
+  url    = {https://github.com/karthik6281/Adaptive-Step-Allocation-for-Diffusion-Sampling}
+}
+```
 
 ## License
 
-MIT. The diffusion checkpoints measured in the generator stage are not
+MIT. The COCO captions in `sd_prompts.tsv` and in the Stable Diffusion run files belong to
+the COCO Consortium and are licensed under CC BY 4.0. The diffusion checkpoints are not
 redistributed and carry their own terms.

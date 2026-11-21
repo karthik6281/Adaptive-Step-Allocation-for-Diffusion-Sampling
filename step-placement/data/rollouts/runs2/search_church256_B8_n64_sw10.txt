@@ -1,0 +1,119 @@
+==========================================================================
+SEARCH vs SAMPLE [church256]  B=8 NFE   n=64 images
+==========================================================================
+  config latent-diffusion/models/ldm/lsun_churches256/config.yaml
+  ckpt   ldm_models/lsun_churches256/model.ckpt
+🔌 Loading CompVis Adapter from: ldm_models/lsun_churches256/model.ckpt
+/opt/conda/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py:258: LightningDeprecationWarning: `pytorch_lightning.utilities.distributed.rank_zero_only` has been deprecated in v1.8.1 and will be removed in v2.0.0. You can import it from `pytorch_lightning.utilities` instead.
+  rank_zero_deprecation(
+LatentDiffusion: Running in eps-prediction mode
+DiffusionWrapper has 294.97 M params.
+Keeping EMAs of 522.
+making attention of type 'vanilla' with 512 in_channels
+Working with z of shape (1, 4, 32, 32) = 4096 dimensions.
+making attention of type 'vanilla' with 512 in_channels
+Training LatentDiffusion as an unconditional model.
+✅ Adapter Configured: 4 channels, 32x32 latents, 1000 timesteps
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  reference generated at 200 NFE
+
+1  SEARCH THE BEST FIXED SCHEDULE AT B=8   (objective: mean over images)
+    uniform  [999, 874, 749, 624, 500, 375, 250, 125, 0]  mean LPIPS 0.268645
+    searched [999, 854, 730, 605, 496, 365, 204, 62, 0]  mean LPIPS 0.255851   (+4.76% vs uniform, 499 evals, converged)
+
+2  SEARCH THE BEST FIXED SCHEDULE AT B=9   (the yardstick, also searched)
+    searched [999, 858, 771, 666, 555, 444, 325, 182, 61, 0]  mean LPIPS 0.226993   (476 evals, converged)
+    NOTE: B+1 has 8 free interior points vs 7 at B, so the yardstick is
+    searched 1.14x harder. That inflates step_value and therefore
+    biases the ratio DOWNWARD, i.e. toward the null. Both must say 'converged'.
+
+3  SEARCH A SCHEDULE PER IMAGE AT B=8   (the oracle, same routine)
+    image   0  0.238604 -> 0.229907  (+3.64%, 334 evals)
+    image   1  0.110770 -> 0.109869  (+0.81%, 249 evals)
+    image   2  0.190597 -> 0.171737  (+9.89%, 416 evals)
+    image   3  0.215805 -> 0.206599  (+4.27%, 165 evals)
+    image   4  0.266859 -> 0.263630  (+1.21%, 327 evals)
+    image   5  0.173799 -> 0.171251  (+1.47%, 167 evals)
+    image   6  0.208103 -> 0.204325  (+1.82%, 250 evals)
+    image   7  0.236019 -> 0.232786  (+1.37%, 328 evals)
+    image   8  0.283445 -> 0.265702  (+6.26%, 333 evals)
+    image   9  0.290046 -> 0.287938  (+0.73%, 328 evals)
+    image  10  0.261237 -> 0.245207  (+6.14%, 250 evals)
+    image  11  0.395998 -> 0.332364  (+16.07%, 336 evals)
+    image  12  0.187230 -> 0.180933  (+3.36%, 248 evals)
+    image  13  0.249814 -> 0.243582  (+2.49%, 166 evals)
+    image  14  0.410563 -> 0.377760  (+7.99%, 334 evals)
+    image  15  0.196501 -> 0.178632  (+9.09%, 329 evals)
+    image  16  0.177284 -> 0.177284  (+0.00%, 84 evals)
+    image  17  0.175125 -> 0.166716  (+4.80%, 332 evals)
+    image  18  0.097415 -> 0.093008  (+4.52%, 332 evals)
+    image  19  0.185452 -> 0.168742  (+9.01%, 334 evals)
+    image  20  0.421270 -> 0.312722  (+25.77%, 250 evals)
+    image  21  0.381130 -> 0.312282  (+18.06%, 498 evals)
+    image  22  0.467346 -> 0.415631  (+11.07%, 412 evals)
+    image  23  0.216742 -> 0.208185  (+3.95%, 249 evals)
+    image  24  0.222176 -> 0.195407  (+12.05%, 333 evals)
+    image  25  0.175003 -> 0.154412  (+11.77%, 248 evals)
+    image  26  0.229226 -> 0.221748  (+3.26%, 336 evals)
+    image  27  0.185082 -> 0.182396  (+1.45%, 331 evals)
+    image  28  0.389306 -> 0.244383  (+37.23%, 747 evals)
+    image  29  0.305668 -> 0.302429  (+1.06%, 166 evals)
+    image  30  0.421955 -> 0.410181  (+2.79%, 335 evals)
+    image  31  0.286584 -> 0.281952  (+1.62%, 246 evals)
+    image  32  0.131382 -> 0.128036  (+2.55%, 331 evals)
+    image  33  0.184997 -> 0.158493  (+14.33%, 334 evals)
+    image  34  0.366425 -> 0.345029  (+5.84%, 333 evals)
+    image  35  0.207472 -> 0.205340  (+1.03%, 333 evals)
+    image  36  0.149691 -> 0.140637  (+6.05%, 496 evals)
+    image  37  0.112343 -> 0.111565  (+0.69%, 167 evals)
+    image  38  0.372316 -> 0.361360  (+2.94%, 416 evals)
+    image  39  0.167800 -> 0.160893  (+4.12%, 333 evals)
+    image  40  0.272357 -> 0.272357  (+0.00%, 84 evals)
+    image  41  0.177069 -> 0.167295  (+5.52%, 331 evals)
+    image  42  0.329383 -> 0.318998  (+3.15%, 414 evals)
+    image  43  0.271544 -> 0.256625  (+5.49%, 248 evals)
+    image  44  0.425887 -> 0.386158  (+9.33%, 418 evals)
+    image  45  0.420152 -> 0.415978  (+0.99%, 249 evals)
+    image  46  0.142924 -> 0.134537  (+5.87%, 250 evals)
+    image  47  0.366022 -> 0.332206  (+9.24%, 250 evals)
+    image  48  0.308899 -> 0.308018  (+0.29%, 166 evals)
+    image  49  0.238400 -> 0.233790  (+1.93%, 330 evals)
+    image  50  0.244607 -> 0.235802  (+3.60%, 498 evals)
+    image  51  0.250509 -> 0.221981  (+11.39%, 251 evals)
+    image  52  0.199174 -> 0.196200  (+1.49%, 329 evals)
+    image  53  0.182630 -> 0.176489  (+3.36%, 329 evals)
+    image  54  0.242382 -> 0.229700  (+5.23%, 333 evals)
+    image  55  0.098375 -> 0.096979  (+1.42%, 249 evals)
+    image  56  0.244821 -> 0.195537  (+20.13%, 498 evals)
+    image  57  0.265710 -> 0.240879  (+9.35%, 827 evals)
+    image  58  0.110508 -> 0.106809  (+3.35%, 334 evals)
+    image  59  0.314591 -> 0.311340  (+1.03%, 166 evals)
+    image  60  0.342308 -> 0.323611  (+5.46%, 415 evals)
+    image  61  0.349282 -> 0.346701  (+0.74%, 250 evals)
+    image  62  0.380316 -> 0.378334  (+0.52%, 331 evals)
+    image  63  0.252018 -> 0.246608  (+2.15%, 167 evals)
+
+    batched-vs-unbatched gap on the SAME schedule: max 9.537e-07  (negligible)
+
+==========================================================================
+  best FIXED (searched)     : 0.255851
+  per-image  (searched)     : 0.238969
+  SEARCHED ORACLE GAIN      : 0.016882
+  one extra NFE (searched)  : 0.028857
+  -> worth 0.585 extra NFE
+  images where search beat the fixed schedule : 62/64
+  distinct per-image schedules found          : 62/64
+
+  -> SEARCH DOES NOT RESCUE IT. Even a per-image search over the schedule
+     space buys less than one extra denoising step. Sampling was not the
+     limitation, and the sampled ceiling was not an artefact of the pool.
+
+  LDM calls used: 692,712
+
+SUMMARY search_vs_sample dataset=church256 budget=8 n=64 searched_gain=0.016882 step_value=0.028857 ratio=0.5850 n_improved=62 uniq_schedules=62 conv_B=1 conv_B1=1 n_capped=0 calls=692712
+  saved runs2/search_church256_B8_n64_sw10.npz

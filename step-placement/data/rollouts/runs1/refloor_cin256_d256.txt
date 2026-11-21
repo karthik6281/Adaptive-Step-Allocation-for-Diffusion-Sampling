@@ -1,0 +1,44 @@
+REFERENCE FLOOR [cin256] draw=256 k=64  rows: search_cin256_B4_n256_sw10.npz (ddim), search_cin256_B8_n256_sw10.npz (ddim)
+  file checks passed
+  config latent-diffusion/models/ldm/cin256/config.yaml
+  ckpt   ldm_models/cin256/model.ckpt
+🔌 Loading CompVis Adapter from: ldm_models/cin256/model.ckpt
+/opt/conda/lib/python3.10/site-packages/pytorch_lightning/utilities/distributed.py:258: LightningDeprecationWarning: `pytorch_lightning.utilities.distributed.rank_zero_only` has been deprecated in v1.8.1 and will be removed in v2.0.0. You can import it from `pytorch_lightning.utilities` instead.
+  rank_zero_deprecation(
+LatentDiffusion: Running in eps-prediction mode
+DiffusionWrapper has 394.98 M params.
+Keeping EMAs of 628.
+making attention of type 'vanilla' with 512 in_channels
+making attention of type 'vanilla' with 512 in_channels
+making attention of type 'vanilla' with 512 in_channels
+Working with z of shape (1, 4, 32, 32) = 4096 dimensions.
+making attention of type 'vanilla' with 512 in_channels
+making attention of type 'vanilla' with 512 in_channels
+making attention of type 'vanilla' with 512 in_channels
+making attention of type 'vanilla' with 512 in_channels
+✅ Adapter Configured: 4 channels, 32x32 latents, 1000 timesteps
+Setting up [LPIPS] perceptual loss: trunk [alex], v[0.1], spatial [off]
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=AlexNet_Weights.IMAGENET1K_V1`. You can also use `weights=AlexNet_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Loading model from: /opt/conda/lib/python3.10/site-packages/lpips/weights/v0.1/alex.pth
+  floor  LPIPS(200-step DDIM, 999-step DDIM) over 64 images:  mean 0.016959  median 0.015872  max 0.047175
+  reproduce  search_cin256_B4_n256_sw10.npz  batched shared N vs D_fixed              max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B4_n256_sw10.npz  per-image own vs per_img                 max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B4_n256_sw10.npz  batched shared N+1 vs D_fixed_B1         max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B4_n256_sw10.npz  per-image shared N vs D_fixed_unbatched  max |dev| 0.000e+00  PASS
+  search_cin256_B4_n256_sw10.npz: D(N+1) full 0.285143 = 16.8x floor, subset 0.276778 = 16.3x;  subset R  0.757 (200-step ref) vs 0.768 (999-step ref)
+  reproduce  search_cin256_B8_n256_sw10.npz  batched shared N vs D_fixed              max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B8_n256_sw10.npz  per-image own vs per_img                 max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B8_n256_sw10.npz  batched shared N+1 vs D_fixed_B1         max |dev| 0.000e+00  PASS
+  reproduce  search_cin256_B8_n256_sw10.npz  per-image shared N vs D_fixed_unbatched  max |dev| 0.000e+00  PASS
+  search_cin256_B8_n256_sw10.npz: D(N+1) full 0.149899 = 8.8x floor, subset 0.146875 = 8.7x;  subset R  2.066 (200-step ref) vs 1.935 (999-step ref)
+
+  row                                          smp     D(N+1)/floor (subset)  R full R sub/200 R sub/999  gain 200->999      step 200->999
+  search_cin256_B4_n256_sw10.npz               ddim            16.8     16.3   0.795     0.757     0.768  0.05692->0.05810  0.07515->0.07566
+  search_cin256_B8_n256_sw10.npz               ddim             8.8      8.7   2.018     2.066     1.935  0.03488->0.03629  0.01688->0.01875
+
+SUMMARY refloor dataset=cin256 row=search_cin256_B4_n256_sw10.npz sampler=ddim B=4 k=64 floor_mean=0.016959 DN1_full=0.285143 ratio=16.8 ratio_sub=16.3 R_full=0.7953 R_sub200=0.7574 R_sub999=0.7679 repro_max_dev=0.000e+00
+SUMMARY refloor dataset=cin256 row=search_cin256_B8_n256_sw10.npz sampler=ddim B=8 k=64 floor_mean=0.016959 DN1_full=0.149899 ratio=8.8 ratio_sub=8.7 R_full=2.0177 R_sub200=2.0658 R_sub999=1.9350 repro_max_dev=0.000e+00
+  saved runs1/refloor_cin256_d256.npz
