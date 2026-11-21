@@ -29,7 +29,7 @@ python rollouts/paper_figures.py --dir build/paper/figures --steps-root .
 the `steps` package in `src/`.
 
 `paper_numbers.py` writes `numbers.tex`, the table rows and the figure data that the report
-uses. It also checks 40 statements the text makes, such as which intervals exclude one, and
+uses. It also checks 52 statements the text makes, such as which intervals exclude one, and
 exits non-zero if any of them fails. Intervals are BCa intervals from 10,000 bootstrap
 resamples of the images with seed 0.
 
