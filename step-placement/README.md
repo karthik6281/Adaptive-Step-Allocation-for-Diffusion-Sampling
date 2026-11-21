@@ -59,7 +59,8 @@ rollouts/          full-rollout study
     ref_floor.py             200-step against 999-step reference
     sd_checks.py             PSNR, DISTS and the fixed-schedule sets on Stable Diffusion
     reward_structure.py      rollout, decoding and LPIPS helpers
-    curvature_probe.py, solver_probe.py, adapter_compvis.py   imported helpers
+    curvature_probe.py, solver_probe.py, romberg_dpm_sampler.py, adapter_compvis.py
+                             imported helpers
     bootstrap.py             intervals for every row, paired comparison and budget trend
     paper_numbers.py         every number and table in the report
     paper_figures.py         the figures
