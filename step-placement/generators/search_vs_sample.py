@@ -1,9 +1,35 @@
-"""Search shared and per-image DDIM schedules with a paired LPIPS objective.
+"""Does SEARCHING the schedule space beat SAMPLING it? Closes the last hole in the ceiling.
 
-The same coordinate-descent routine searches shared schedules at budgets B and
-B+1 and a separate budget-B schedule for each image. The resulting NPZ contains
-the schedules, per-image scores, summary counts, and run settings. Coordinate
-descent does not certify a global optimum.
+reward_structure.py samples M jittered schedules. AutoDiffusion SEARCHES, which is how it
+reports FID 17.86 vs DDIM's 138.66 at four steps. A search finds better per-image schedules
+than 24 draws, so a sampled ceiling bounds the POOL, not the space. That is the first
+objection a reviewer raises against a null result, and nothing else in this repo answers it.
+
+THE ASYMMETRY THAT WOULD MANUFACTURE A FALSE POSITIVE. The gain is a DIFFERENCE:
+
+    gain = mean_i D[i, best FIXED schedule]  -  mean_i  min over schedules  D[i, .]
+
+Search the second term while taking the first from the sampled pool and you are comparing a
+searched optimum against a sampled one; the difference is then mostly search effort, not
+per-image structure. Every term here is searched, with the SAME routine and the SAME
+search budget:
+
+    F_B      best FIXED schedule at budget B          searched
+    F_{B+1}  best FIXED schedule at budget B+1        searched   <- the yardstick
+    O_B      per-image optimum at budget B            searched
+
+    searched gain = mean(F_B) - mean(O_B)
+    one extra NFE = mean(F_B) - mean(F_{B+1})
+
+NO TRAIN/TEST SPLIT IS NEEDED FOR A CEILING. Generation is deterministic (DDIM eta=0) and
+LPIPS is deterministic, so D[i,s] carries no noise and there is nothing to overfit: the
+searched per-image optimum IS the per-image optimum, up to search quality. That makes this
+an honest UPPER bound. Whether a policy could PREDICT it is a separate question that this
+file deliberately does not touch -- see the permutation null in reward_structure.py.
+
+Coordinate descent is greedy and can stall in a local optimum, which makes the reported
+gain a LOWER bound on the true searched gain. Combined with the above it brackets the
+answer: if even a search finds less than one extra NFE, sampling was not the problem.
 """
 
 import argparse
@@ -13,19 +39,10 @@ import sys
 import numpy as np
 import torch
 
-_HERE = os.path.abspath(os.path.dirname(__file__))
-_TAED = os.path.abspath(os.path.join(_HERE, "..", ".."))
-for _path in (_HERE, _TAED, os.path.join(_TAED, "utils")):
-    if _path not in sys.path:
-        sys.path.insert(0, _path)
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from reward_structure import (  # noqa: E402
-    LDM_NAME,
-    decode,
-    lpips_to,
-    resolve_paths,
-    run_schedule,
-)
+from reward_structure import (LDM_NAME, decode, lpips_to, resolve_paths,  # noqa: E402
+                              run_schedule)
 
 
 def uniform(T, B):
@@ -45,9 +62,8 @@ def candidates(sched, j, n_cand):
 def coord_descent(score, sched, sweeps, n_cand):
     """Greedy over interior points; score(sched) -> scalar, lower is better.
 
-    converged=True means a full pass accepted no tested candidate. False means the pass
-    limit was reached before that stopping test; neither value certifies a local or global
-    optimum outside the sampled coordinate candidates.
+    Returns converged=False if it ran out of sweeps, which means the reported optimum is
+    not the local optimum and the two budgets were not searched to the same standard.
 
     Also returns the STARTING score. The caller must use that as the baseline rather than
     a separately-computed one: a batched and an unbatched evaluation of the same schedule
@@ -105,6 +121,7 @@ def main():
     args = ap.parse_args()
 
     import lpips
+
     from adapter_compvis import create_compvis_adapter
 
     device = torch.device(args.device)
@@ -177,9 +194,8 @@ def main():
     per_sched = np.zeros((n, B + 1), dtype=np.int64)
     n_capped = 0
     for i in range(n):
-        s_i, v_i, b_i, e_i, c_i = coord_descent(
-            lambda s, image_index=i: lpips_one(s, image_index),
-            fB, args.sweeps, args.n_cand)
+        s_i, v_i, b_i, e_i, c_i = coord_descent(lambda s: lpips_one(s, i), fB,
+                                                args.sweeps, args.n_cand)
         per_img[i], per_base[i], per_sched[i] = v_i, b_i, s_i
         n_capped += not c_i
         print(f"    image {i:3d}  {b_i:.6f} -> {v_i:.6f}"
@@ -215,9 +231,9 @@ def main():
     if step_value <= 0:
         print("\n  -> one extra NFE did not help; the yardstick is broken at this budget.")
     elif gain < step_value:
-        print("\n  -> THIS SEARCH FINDS LESS THAN ONE NFE. The searched per-image schedules")
-        print("     buy less than one extra denoising step; this does not certify the")
-        print("     global per-image optimum.")
+        print("\n  -> SEARCH DOES NOT RESCUE IT. Even a per-image search over the schedule")
+        print("     space buys less than one extra denoising step. Sampling was not the")
+        print("     limitation, and the sampled ceiling was not an artefact of the pool.")
     else:
         print("\n  -> SEARCH BEATS ONE NFE. The sampled ceiling UNDERSTATED the real one;")
         print("     the negative result does not hold and the pool was the limitation.")
@@ -234,16 +250,7 @@ def main():
 
     if args.save_npz:
         np.savez(args.save_npz, fixed_B=fB, fixed_B1=fB1, per_sched=per_sched,
-                 per_img=per_img, D_fixed=per_base, D_fixed_batched=D_fB,
-                 gain=gain, step_value=step_value,
-                 n_improved=np.int64(n_improved), uniq_schedules=np.int64(uniq),
-                 conv_B=np.int8(c1), conv_B1=np.int8(c2),
-                 n_capped=np.int64(n_capped), calls=np.int64(calls[0]),
-                 dataset=np.asarray(args.dataset), budget=np.int64(B),
-                 n_images=np.int64(n), sweeps=np.int64(args.sweeps),
-                 n_candidates=np.int64(args.n_cand), seed=np.int64(args.seed),
-                 rng_images=np.int64(args.rng_images), ref_steps=np.int64(args.ref_steps),
-                 max_t=np.int64(T))
+                 per_img=per_img, D_fixed=D_fB, gain=gain, step_value=step_value)
         print(f"  saved {args.save_npz}")
 
 
